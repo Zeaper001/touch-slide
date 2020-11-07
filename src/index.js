@@ -27,6 +27,7 @@ class TouchSlider {
         };
 
         this.setListItemsWidth();
+        this.setViewportHeight();
         this.bindEvents();
     }
 
@@ -34,6 +35,7 @@ class TouchSlider {
 
         this.state.registerListener(() => {
             this.setListXPosition();
+            this.setViewportHeight();
         });
 
         this.list.addEventListener('touchstart', (event) =>{
@@ -159,6 +161,10 @@ class TouchSlider {
         this.listItems.forEach((item) => {
             item.style.width = this.element.clientWidth+'px';
         });
+    }
+
+    setViewportHeight() {
+        this.element.style.height = this.listItems[this.state.index].firstElementChild.clientHeight+'px';
     }
 
 }
