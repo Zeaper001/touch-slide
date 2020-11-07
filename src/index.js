@@ -1,3 +1,4 @@
+import {getTranslateCSS} from './helpers';
 import './style.css';
 
 class TouchSlider {
@@ -91,7 +92,7 @@ class TouchSlider {
     getPanningThreshold(direction) {
         const sliderLeftPosition = (this.state.index * this.element.clientWidth);
         const threshold = this.element.clientWidth / 6;
-        const listOffset = Math.abs(this.list.offsetLeft);
+        const listOffset = Math.abs(getTranslateCSS(this.list)[0]);
 
         switch (direction) {
             case 'left':
@@ -103,7 +104,7 @@ class TouchSlider {
 
     panLeft(index, direction, x) {
         const panX = (index * this.element.clientWidth) + x;
-        this.list.style.left = '-'+panX+'px';
+        this.list.style.transform = 'translate3d(-'+panX+'px, 0, 0)';
         if(!direction) {
             this.state.direction = 'left';
         }
@@ -112,9 +113,9 @@ class TouchSlider {
     panRight(index, direction, x) {
         const panX = (index * this.element.clientWidth) + x;
         if(index === 0) {
-            this.list.style.left = Math.abs(panX)+'px';
+            this.list.style.transform ='translate3d('+ Math.abs(panX)+'px, 0, 0)';
         } else {
-            this.list.style.left = '-'+panX+'px';
+            this.list.style.transform = 'translate3d(-'+panX+'px, 0, 0)';
         }
         if(!direction) {
             this.state.direction = 'right';
@@ -143,7 +144,7 @@ class TouchSlider {
 
     setListXPosition() {
         this.addTransition();
-        this.list.style.left = '-'+this.state.index * this.element.clientWidth+'px';
+        this.list.style.transform = 'translate3d(-'+this.state.index * this.element.clientWidth+'px, 0, 0)';
         this.state.direction = false;
     }
 
