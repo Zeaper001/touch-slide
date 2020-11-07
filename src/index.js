@@ -1,5 +1,5 @@
 import './style.css';
-
+import Swipe from './test';
 
 class TouchSlider {
 
@@ -11,6 +11,7 @@ class TouchSlider {
         this.state = {
             activeIndex: 0,
             direction: false,
+            panXHasStarted: false,
             initialX: 0,
             initialY: 0,
             listX: 0,
@@ -45,8 +46,7 @@ class TouchSlider {
 
 
         this.list.addEventListener('touchmove', (event) => {
-      
-            
+
             if(this.state.initialX && this.state.initialY) {
                 const currentX = event.touches[0].clientX;
                 const currentY = event.touches[0].clientY;
@@ -55,33 +55,24 @@ class TouchSlider {
 
                 const x = initialX - currentX;
                 const y = initialY - currentY;
-            
-                if (Math.abs(x) > Math.abs(y)) {
-                    if (event.cancelable) {
-                        event.preventDefault();
-                    }
 
-                    if (x > 0) {
-                        const panX = (index * this.element.clientWidth) + x;
-                        this.list.style.left = '-'+panX+'px';
-                        if(!direction) {
-                            this.state.direction = 'left';
-                        }
-                        return;
-                    }
-
-
-                    const panX = (index * this.element.clientWidth) + x;
-                    if(index === 0) {
-                        this.list.style.left = Math.abs(panX)+'px';
+                if(!this.state.panXHasStarted) {
+                    if (Math.abs(x) > Math.abs(y)) {
+                        this.state.panXHasStarted = true;
                     } else {
-                        this.list.style.left = '-'+panX+'px';
-                    }
-                    if(!direction) {
-                        this.state.direction = 'right';
+                        if (x > 0 ) {
+                            console.log('Up');
+                        } else {
+                            console.log('Down');
+                        }
                     }
                 }
-
+                
+                if (x > 0) {
+                    this.panLeft(index, direction, x);
+                } else {
+                    this.panRight(index, direction, x);
+                }
                 
             }
         });
@@ -100,12 +91,33 @@ class TouchSlider {
         });
     }
 
+    panLeft(index, direction, x) {
+        const panX = (index * this.element.clientWidth) + x;
+        this.list.style.left = '-'+panX+'px';
+        if(!direction) {
+            this.state.direction = 'left';
+        }
+    }
+
+    panRight(index, direction, x) {
+        const panX = (index * this.element.clientWidth) + x;
+        if(index === 0) {
+            this.list.style.left = Math.abs(panX)+'px';
+        } else {
+            this.list.style.left = '-'+panX+'px';
+        }
+        if(!direction) {
+            this.state.direction = 'right';
+        }
+    }
+
     panLeftEnded() {
         if(this.state.index !== (this.listItems.length - 1)) {
             this.state.index = this.state.index + 1;
         } else {
             this.setListXPosition();
         }
+        this.state.panXHasStarted = false;
         this.state.direction = false;
     }
     
@@ -115,7 +127,12 @@ class TouchSlider {
         } else {
             this.setListXPosition();
         }
+        this.state.panXHasStarted = false;
         this.state.direction = false;
+    }
+
+    getPanningDirection() {
+        
     }
 
     setListXPosition() {
@@ -154,3 +171,4 @@ class TouchSlider {
 const element = document.querySelector('.Touch--Slider');
 
 new TouchSlider(element);
+// new Swipe(element);
