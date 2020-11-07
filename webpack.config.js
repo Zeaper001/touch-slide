@@ -23,11 +23,12 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader', 'postcss-loader'],
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader'],
       },
     ]
   },
   plugins: [
-    new webpack.SourceMapDevToolPlugin({})
+    new webpack.SourceMapDevToolPlugin({}),
+    new MiniCssExtractPlugin()
   ]
 };
