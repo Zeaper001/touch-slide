@@ -1,5 +1,4 @@
 import './style.css';
-import Swipe from './test';
 
 class TouchSlider {
 
@@ -14,7 +13,6 @@ class TouchSlider {
             panXHasStarted: false,
             initialX: 0,
             initialY: 0,
-            listX: 0,
             set index(val) {
                 this.activeIndex = val;
                 this.stateListener(val);
@@ -44,7 +42,6 @@ class TouchSlider {
             this.state.initialY = event.touches[0].clientY;
         });
 
-
         this.list.addEventListener('touchmove', (event) => {
 
             if(this.state.initialX && this.state.initialY) {
@@ -60,11 +57,7 @@ class TouchSlider {
                     if (Math.abs(x) > Math.abs(y)) {
                         this.state.panXHasStarted = true;
                     } else {
-                        if (x > 0 ) {
-                            console.log('Up');
-                        } else {
-                            console.log('Down');
-                        }
+                        return;
                     }
                 }
                 
@@ -79,16 +72,31 @@ class TouchSlider {
 
         this.list.addEventListener('touchend', () => {
 
-            if(this.state.direction === 'left' && Math.abs(this.list.offsetLeft) > this.getPanningThreshold()) {
+            const {direction} = this.state;
+
+            if(direction === 'left' && this.getPanningThreshold('left')) {
                 return this.panLeftEnded();
             }
 
-            if(this.state.direction === 'right' && Math.abs(this.list.offsetLeft) < this.getPanningThreshold()) {
+            if(direction === 'right' && this.getPanningThreshold('right')) {
                 return this.panRightEnded();
             }
 
             this.setListXPosition();
         });
+    }
+
+    getPanningThreshold(direction) {
+        const sliderLeftPosition = (this.state.index * this.element.clientWidth);
+        const threshold = this.element.clientWidth / 6;
+        const listOffset = Math.abs(this.list.offsetLeft);
+
+        switch (direction) {
+            case 'left':
+                return listOffset > (sliderLeftPosition + threshold);
+            case 'right':
+                return listOffset < (sliderLeftPosition - threshold);
+        }
     }
 
     panLeft(index, direction, x) {
@@ -131,23 +139,10 @@ class TouchSlider {
         this.state.direction = false;
     }
 
-    getPanningDirection() {
-        
-    }
-
     setListXPosition() {
         this.addTransition();
         this.list.style.left = '-'+this.state.index * this.element.clientWidth+'px';
         this.state.direction = false;
-    }
-
-    getPanningThreshold() {
-        const sliderLeftPosition = (this.state.index * this.element.clientWidth);
-
-        if(this.state.direction === 'right') {
-            return sliderLeftPosition - 100;
-        }
-        return sliderLeftPosition + 100;
     }
 
     addTransition() {
@@ -171,4 +166,3 @@ class TouchSlider {
 const element = document.querySelector('.Touch--Slider');
 
 new TouchSlider(element);
-// new Swipe(element);
