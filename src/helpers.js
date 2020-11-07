@@ -1,4 +1,4 @@
-// Extracts the values from css translate property
+// Extracts the values from css translate property fir IE compatibility
 export const getTranslateCSS = (item) => {
     var transArr = [];
 
